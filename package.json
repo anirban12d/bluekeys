@@ -14,11 +14,12 @@
   ],
   "scripts": {
     "dev": "tsx src/cli/index.tsx",
-    "build": "tsc -p tsconfig.json && node -e \"const fs=require('fs');fs.cpSync('src/constants/languages/data','dist/constants/languages/data',{recursive:true});fs.cpSync('src/constants/quotes/data','dist/constants/quotes/data',{recursive:true})\"",
+    "build": "tsc -p tsconfig.json && node -e \"const fs=require('fs');fs.cpSync('src/constants/languages/data','dist/constants/languages/data',{recursive:true});fs.cpSync('src/constants/quotes/data','dist/constants/quotes/data',{recursive:true});fs.cpSync('src/constants/snippets/data','dist/constants/snippets/data',{recursive:true});fs.cpSync('src/constants/commands/data','dist/constants/commands/data',{recursive:true})\"",
     "start": "node dist/cli/index.js",
     "build:binary": "bun scripts/build-binary.ts",
     "test": "vitest run",
     "preversion": "pnpm test",
+    "version": "node scripts/sync-version.js && git add src/cli/version.ts",
     "postversion": "git push && git push --tags",
     "release": "npm version",
     "prepublishOnly": "npm run build"

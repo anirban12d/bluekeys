@@ -1,5 +1,10 @@
 #!/usr/bin/env node
-import { render } from "ink";
-import { App } from "../app/App.js";
+import { handleCliCommands } from "./commands.js";
 
-render(<App />);
+// Handle --version, --help, upgrade before rendering the React app
+const shouldExit = handleCliCommands(process.argv.slice(2));
+if (!shouldExit) {
+  const { render } = await import("ink");
+  const { App } = await import("../app/App.js");
+  render(<App />);
+}
