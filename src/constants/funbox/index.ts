@@ -1,4 +1,5 @@
 import type { FunboxName } from "../../engine/types.js";
+import poetryData from "./poetry.json" with { type: "json" };
 
 export interface FunboxDefinition {
   name: FunboxName;
@@ -172,12 +173,6 @@ export const FUNBOX_LIST: FunboxDefinition[] = [
     description: "Type poetry",
     generatesOwnWords: true,
   },
-  {
-    name: "wikipedia",
-    label: "wikipedia",
-    description: "Type Wikipedia excerpts",
-    generatesOwnWords: true,
-  },
 ];
 
 export function getFunbox(name: FunboxName): FunboxDefinition | undefined {
@@ -193,6 +188,12 @@ export function applyFunboxTransform(word: string, funboxNames: FunboxName[]): s
     }
   }
   return result;
+}
+
+export function getRandomPoem(): { text: string; source: string; id: number } | null {
+  const poems = poetryData as { id: number; text: string; source: string }[];
+  if (poems.length === 0) return null;
+  return poems[Math.floor(Math.random() * poems.length)]!;
 }
 
 export function generateFunboxWord(name: FunboxName): string {

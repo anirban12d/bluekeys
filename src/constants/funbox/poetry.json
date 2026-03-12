@@ -1,0 +1,127 @@
+[
+  {
+    "id": 1,
+    "text": "Two roads diverged in a yellow wood, And sorry I could not travel both And be one traveler, long I stood And looked down one as far as I could To where it bent in the undergrowth;",
+    "source": "Robert Frost - The Road Not Taken"
+  },
+  {
+    "id": 2,
+    "text": "I wandered lonely as a cloud That floats on high o'er vales and hills, When all at once I saw a crowd, A host, of golden daffodils; Beside the lake, beneath the trees, Fluttering and dancing in the breeze.",
+    "source": "William Wordsworth - Daffodils"
+  },
+  {
+    "id": 3,
+    "text": "Shall I compare thee to a summer's day? Thou art more lovely and more temperate: Rough winds do shake the darling buds of May, And summer's lease hath all too short a date.",
+    "source": "William Shakespeare - Sonnet 18"
+  },
+  {
+    "id": 4,
+    "text": "Do not go gentle into that good night, Old age should burn and rave at close of day; Rage, rage against the dying of the light.",
+    "source": "Dylan Thomas - Do Not Go Gentle into That Good Night"
+  },
+  {
+    "id": 5,
+    "text": "Hope is the thing with feathers That perches in the soul, And sings the tune without the words, And never stops at all.",
+    "source": "Emily Dickinson - Hope is the Thing with Feathers"
+  },
+  {
+    "id": 6,
+    "text": "I carry your heart with me I carry it in my heart I am never without it anywhere I go you go my dear and whatever is done by only me is your doing my darling",
+    "source": "E.E. Cummings - I Carry Your Heart with Me"
+  },
+  {
+    "id": 7,
+    "text": "The fog comes on little cat feet. It sits looking over harbor and city on silent haunches and then moves on.",
+    "source": "Carl Sandburg - Fog"
+  },
+  {
+    "id": 8,
+    "text": "Because I could not stop for Death, He kindly stopped for me; The Carriage held but just Ourselves And Immortality.",
+    "source": "Emily Dickinson - Because I Could Not Stop for Death"
+  },
+  {
+    "id": 9,
+    "text": "I met a traveller from an antique land, Who said Two vast and trunkless legs of stone Stand in the desert. Near them, on the sand, Half sunk a shattered visage lies, whose frown, And wrinkled lip, and sneer of cold command,",
+    "source": "Percy Bysshe Shelley - Ozymandias"
+  },
+  {
+    "id": 10,
+    "text": "Tyger Tyger, burning bright, In the forests of the night; What immortal hand or eye, Could frame thy fearful symmetry?",
+    "source": "William Blake - The Tyger"
+  },
+  {
+    "id": 11,
+    "text": "If you can keep your head when all about you Are losing theirs and blaming it on you, If you can trust yourself when all men doubt you, But make allowance for their doubting too;",
+    "source": "Rudyard Kipling - If"
+  },
+  {
+    "id": 12,
+    "text": "Once upon a midnight dreary, while I pondered, weak and weary, Over many a quaint and curious volume of forgotten lore, While I nodded, nearly napping, suddenly there came a tapping,",
+    "source": "Edgar Allan Poe - The Raven"
+  },
+  {
+    "id": 13,
+    "text": "I think that I shall never see A poem lovely as a tree. A tree whose hungry mouth is prest Against the earth's sweet flowing breast;",
+    "source": "Joyce Kilmer - Trees"
+  },
+  {
+    "id": 14,
+    "text": "How do I love thee? Let me count the ways. I love thee to the depth and breadth and height My soul can reach, when feeling out of sight For the ends of being and ideal grace.",
+    "source": "Elizabeth Barrett Browning - Sonnet 43"
+  },
+  {
+    "id": 15,
+    "text": "Tell me not, in mournful numbers, Life is but an empty dream! For the soul is dead that slumbers, And things are not what they seem.",
+    "source": "Henry Wadsworth Longfellow - A Psalm of Life"
+  },
+  {
+    "id": 16,
+    "text": "It was many and many a year ago, In a kingdom by the sea, That a maiden there lived whom you may know By the name of Annabel Lee;",
+    "source": "Edgar Allan Poe - Annabel Lee"
+  },
+  {
+    "id": 17,
+    "text": "Let us go then, you and I, When the evening is spread out against the sky Like a patient etherized upon a table; Let us go, through certain half-deserted streets,",
+    "source": "T.S. Eliot - The Love Song of J. Alfred Prufrock"
+  },
+  {
+    "id": 18,
+    "text": "I have eaten the plums that were in the icebox and which you were probably saving for breakfast Forgive me they were delicious so sweet and so cold",
+    "source": "William Carlos Williams - This Is Just to Say"
+  },
+  {
+    "id": 19,
+    "text": "So much depends upon a red wheel barrow glazed with rain water beside the white chickens.",
+    "source": "William Carlos Williams - The Red Wheelbarrow"
+  },
+  {
+    "id": 20,
+    "text": "Out of the night that covers me, Black as the pit from pole to pole, I thank whatever gods may be For my unconquerable soul.",
+    "source": "William Ernest Henley - Invictus"
+  },
+  {
+    "id": 21,
+    "text": "In the fell clutch of circumstance I have not winced nor cried aloud. Under the bludgeonings of chance My head is bloody, but unbowed.",
+    "source": "William Ernest Henley - Invictus"
+  },
+  {
+    "id": 22,
+    "text": "I saw the best minds of my generation destroyed by madness, starving hysterical naked, dragging themselves through the negro streets at dawn looking for an angry fix,",
+    "source": "Allen Ginsberg - Howl"
+  },
+  {
+    "id": 23,
+    "text": "The world is too much with us; late and soon, Getting and spending, we lay waste our powers; Little we see in Nature that is ours; We have given our hearts away, a sordid boon!",
+    "source": "William Wordsworth - The World Is Too Much with Us"
+  },
+  {
+    "id": 24,
+    "text": "Whose woods these are I think I know. His house is in the village though; He will not see me stopping here To watch his woods fill up with snow.",
+    "source": "Robert Frost - Stopping by Woods on a Snowy Evening"
+  },
+  {
+    "id": 25,
+    "text": "Some say the world will end in fire, Some say in ice. From what I've tasted of desire I hold with those who favor fire.",
+    "source": "Robert Frost - Fire and Ice"
+  }
+]

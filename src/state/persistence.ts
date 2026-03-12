@@ -194,7 +194,7 @@ function generateConfigToml(config: GameConfig): string {
     `#   backwards, ddoouubblleedd, underscore_spaces, memory, read_ahead,`,
     `#   read_ahead_easy, read_ahead_hard, no_quit, gibberish, specials,`,
     `#   IPv4, IPv6, binary, hexadecimal, rot13, instant_messaging, zipf,`,
-    `#   pseudolang, poetry, wikipedia`,
+    `#   pseudolang, poetry`,
     `funbox = ${JSON.stringify(config.funbox)}`,
     ``,
   ];

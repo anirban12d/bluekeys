@@ -8,7 +8,7 @@ import { loadLanguage } from "../../constants/languages/index.js";
 import { getRandomQuote } from "../../constants/quotes/index.js";
 import { getRandomSnippet } from "../../constants/snippets/index.js";
 import { getRandomCommand } from "../../constants/commands/index.js";
-import { generateFunboxWord, applyFunboxTransform } from "../../constants/funbox/index.js";
+import { generateFunboxWord, applyFunboxTransform, getRandomPoem } from "../../constants/funbox/index.js";
 import wordList from "../../constants/languages/words.json" with { type: "json" };
 
 function getWordListForConfig(config: GameConfig): string[] {
@@ -21,12 +21,20 @@ function hasFunboxThatGeneratesWords(config: GameConfig): boolean {
   return config.funbox.some((name) => {
     return [
       "gibberish", "specials", "IPv4", "IPv6",
-      "binary", "hexadecimal", "pseudolang", "poetry", "wikipedia",
+      "binary", "hexadecimal", "pseudolang", "poetry",
     ].includes(name);
   });
 }
 
 function generateFunboxWords(config: GameConfig, count: number): string[] {
+  // Poetry: load a random poem and split into words
+  if (config.funbox.includes("poetry")) {
+    const poem = getRandomPoem();
+    if (poem) {
+      return poem.text.split(/\s+/).filter((w) => w.length > 0);
+    }
+  }
+
   const generatingFunbox = config.funbox.find((name) =>
     ["gibberish", "specials", "IPv4", "IPv6", "binary", "hexadecimal", "pseudolang"].includes(name),
   );

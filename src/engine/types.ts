@@ -60,8 +60,7 @@ export type FunboxName =
   | "instant_messaging"
   | "zipf"
   | "pseudolang"
-  | "poetry"
-  | "wikipedia";
+  | "poetry";
 
 // ── Configuration ────────────────────────────────────────────────────
 
