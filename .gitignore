@@ -4,6 +4,12 @@ node_modules/
 
 # Build output
 dist/
+.build/
+
+# Compiled binaries
+/bluekeys
+/bluekeys-test
+bun.lock
 
 # OS files
 .DS_Store
