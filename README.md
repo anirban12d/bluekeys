@@ -2,6 +2,12 @@
 
 **Monkeytype for your terminal.**
 
+
+
+https://github.com/user-attachments/assets/8d9b45df-4393-4d3a-a882-71819f1a64b4
+
+
+
 ---
 
 ## About
