@@ -1,30 +1,45 @@
 import type { LanguageWordList } from "../../engine/types.js";
-import { readFileSync, readdirSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, "data");
-// Also check relative to project root when running via tsx
-const ALT_DATA_DIR = join(__dirname, "..", "..", "..", "src", "constants", "languages", "data");
+// Static imports — bundled into the binary, no filesystem needed at runtime
+import englishRaw from "./data/english.json" with { type: "json" };
+import english1kRaw from "./data/english_1k.json" with { type: "json" };
+import frenchRaw from "./data/french.json" with { type: "json" };
+import germanRaw from "./data/german.json" with { type: "json" };
+import spanishRaw from "./data/spanish.json" with { type: "json" };
+import codePythonRaw from "./data/code_python.json" with { type: "json" };
+import codeJavascriptRaw from "./data/code_javascript.json" with { type: "json" };
 
-function getDataDir(): string {
-  if (existsSync(DATA_DIR)) return DATA_DIR;
-  if (existsSync(ALT_DATA_DIR)) return ALT_DATA_DIR;
-  return DATA_DIR;
+// ── Raw data registry ───────────────────────────────────────────────
+
+interface RawLanguage {
+  name?: string;
+  orderedByFrequency?: boolean;
+  noLazyMode?: boolean;
+  words?: string[];
 }
 
+const RAW_LANGUAGES: Record<string, RawLanguage> = {
+  english: englishRaw,
+  english_1k: english1kRaw,
+  french: frenchRaw,
+  german: germanRaw,
+  spanish: spanishRaw,
+  code_python: codePythonRaw,
+  code_javascript: codeJavascriptRaw,
+};
+
+// ── Cache ───────────────────────────────────────────────────────────
+
 const cache = new Map<string, LanguageWordList>();
+
+// ── Public API ──────────────────────────────────────────────────────
 
 export function loadLanguage(name: string): LanguageWordList {
   const cached = cache.get(name);
   if (cached) return cached;
 
-  const dir = getDataDir();
-  const filePath = join(dir, `${name}.json`);
-
-  try {
-    const raw = JSON.parse(readFileSync(filePath, "utf-8"));
+  const raw = RAW_LANGUAGES[name];
+  if (raw) {
     const lang: LanguageWordList = {
       name: raw.name ?? name,
       orderedByFrequency: raw.orderedByFrequency ?? false,
@@ -33,20 +48,12 @@ export function loadLanguage(name: string): LanguageWordList {
     };
     cache.set(name, lang);
     return lang;
-  } catch {
-    // Fallback to basic english embedded in languages/words.json
-    return { name, orderedByFrequency: true, words: [] };
   }
+
+  // Unknown language — return empty fallback
+  return { name, orderedByFrequency: true, words: [] };
 }
 
 export function listAvailableLanguages(): string[] {
-  const dir = getDataDir();
-  try {
-    return readdirSync(dir)
-      .filter((f) => f.endsWith(".json"))
-      .map((f) => f.replace(".json", ""))
-      .sort();
-  } catch {
-    return ["english"];
-  }
+  return Object.keys(RAW_LANGUAGES).sort();
 }
