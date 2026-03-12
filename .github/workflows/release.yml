@@ -1,0 +1,77 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - { bun: bun-darwin-arm64, name: darwin-arm64 }
+          - { bun: bun-darwin-x64, name: darwin-x64 }
+          - { bun: bun-linux-x64, name: linux-x64 }
+          - { bun: bun-linux-arm64, name: linux-arm64 }
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: bun scripts/build-binary.ts ${{ matrix.target.bun }}
+
+      - run: tar czf bluekeys-${{ matrix.target.name }}.tar.gz bluekeys
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bluekeys-${{ matrix.target.name }}
+          path: bluekeys-${{ matrix.target.name }}.tar.gz
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: bluekeys-*.tar.gz
+          generate_release_notes: true
+
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm build
+
+      - run: pnpm publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

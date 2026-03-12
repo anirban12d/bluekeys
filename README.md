@@ -18,8 +18,25 @@ No browser. No distractions. Just you and your words per minute.
 
 ## Installation
 
+### Quick install (macOS / Linux)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/anirban12d/bluekeys/main/scripts/install.sh | sh
+```
+
+This downloads a prebuilt binary — no Node.js required.
+
+### npm
+
 ```bash
 npm install -g bluekeys
+```
+
+### From a specific release
+
+```bash
+# Install a specific version
+curl -fsSL https://raw.githubusercontent.com/anirban12d/bluekeys/main/scripts/install.sh | sh -s v1.0.1
 ```
 
 Then simply run:
@@ -150,6 +167,15 @@ cd bluekeys
 pnpm install
 pnpm run build
 node dist/cli/index.js
+```
+
+### Building a standalone binary
+
+Requires [Bun](https://bun.sh):
+
+```bash
+pnpm build:binary
+./bluekeys
 ```
 
 ## Documentation
