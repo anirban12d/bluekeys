@@ -172,6 +172,10 @@ function getMode2(state: GameState): number | string {
       return state.quoteInfo?.id ?? 0;
     case "zen":
       return 0;
+    case "code":
+      return state.quoteInfo?.id ?? 0;
+    case "cli":
+      return state.quoteInfo?.id ?? 0;
     case "custom":
       return "custom";
     default:

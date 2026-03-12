@@ -6,6 +6,8 @@ import { createTimer, type GameTimer } from "../../engine/timer.js";
 import { generateWords, generateMoreWords } from "../../engine/wordGenerator.js";
 import { loadLanguage } from "../../constants/languages/index.js";
 import { getRandomQuote } from "../../constants/quotes/index.js";
+import { getRandomSnippet } from "../../constants/snippets/index.js";
+import { getRandomCommand } from "../../constants/commands/index.js";
 import { generateFunboxWord, applyFunboxTransform } from "../../constants/funbox/index.js";
 import wordList from "../../constants/languages/words.json" with { type: "json" };
 
@@ -54,6 +56,36 @@ function buildInitialWords(config: GameConfig): { words: string[]; quoteInfo: { 
       };
     }
     // Fallback if no quotes available
+    const list = getWordListForConfig(config);
+    return { words: generateWords(config, list), quoteInfo: null };
+  }
+
+  // Code mode: load a snippet and split into words
+  if (config.mode === "code") {
+    const snippet = getRandomSnippet(config.codeLanguage, config.quoteLength);
+    if (snippet) {
+      const words = snippet.text.split(/\s+/).filter((w) => w.length > 0);
+      return {
+        words: words.map((w) => applyFunboxTransform(w, config.funbox)),
+        quoteInfo: { source: snippet.source, id: snippet.id },
+      };
+    }
+    // Fallback
+    const list = getWordListForConfig(config);
+    return { words: generateWords(config, list), quoteInfo: null };
+  }
+
+  // CLI mode: load a command and split into words
+  if (config.mode === "cli") {
+    const command = getRandomCommand(config.cliCategory, config.quoteLength);
+    if (command) {
+      const words = command.text.split(/\s+/).filter((w) => w.length > 0);
+      return {
+        words: words.map((w) => applyFunboxTransform(w, config.funbox)),
+        quoteInfo: { source: command.source, id: command.id },
+      };
+    }
+    // Fallback
     const list = getWordListForConfig(config);
     return { words: generateWords(config, list), quoteInfo: null };
   }

@@ -9,7 +9,7 @@ export type GamePhase =
   | "settings"
   | "customText";
 
-export type GameMode = "time" | "words" | "quote" | "zen" | "custom";
+export type GameMode = "time" | "words" | "quote" | "code" | "cli" | "zen" | "custom";
 export type Difficulty = "normal" | "expert" | "master";
 export type StopOnError = "off" | "word" | "letter";
 export type ConfidenceMode = "off" | "on" | "max";
@@ -142,6 +142,12 @@ export interface GameConfig {
 
   // Custom text
   customText: CustomTextConfig | null;
+
+  // Code snippets mode
+  codeLanguage: string;
+
+  // CLI commands mode
+  cliCategory: string;
 }
 
 // ── Custom Text ──────────────────────────────────────────────────────

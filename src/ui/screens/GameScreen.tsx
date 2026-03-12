@@ -38,7 +38,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({
 
   // Timer / progress display
   const isTimeMode = config.mode === "time";
-  const isWordsMode = config.mode === "words" || config.mode === "quote" || config.mode === "custom";
+  const isWordsMode = config.mode === "words" || config.mode === "quote" || config.mode === "code" || config.mode === "cli" || config.mode === "custom";
 
   let progressText = "";
   if (isTimeMode && state.phase === "active") {

@@ -63,7 +63,7 @@ function shouldQuickEnd(state: GameState, input: string): boolean {
   if (!state.config.quickEnd) return false;
   const mode = state.config.mode;
   // Quick end applies to words, quote, and custom modes (not time, not zen)
-  if (mode !== "words" && mode !== "quote" && mode !== "custom") return false;
+  if (mode !== "words" && mode !== "quote" && mode !== "code" && mode !== "cli" && mode !== "custom") return false;
   const idx = state.words.activeWordIndex;
   if (idx < state.words.words.length - 1) return false;
   const target = state.words.words[idx]!;
@@ -520,7 +520,7 @@ function handleSpace(
 
   // ── Check completion for words/quote/custom modes ─────────────────
   const isFinishingMode =
-    config.mode === "words" || config.mode === "quote" || config.mode === "custom";
+    config.mode === "words" || config.mode === "quote" || config.mode === "code" || config.mode === "cli" || config.mode === "custom";
   if (isFinishingMode && newIndex >= words.words.length) {
     return {
       state: {

@@ -247,6 +247,8 @@ function getModeLabel(state: GameState): string {
 
   if (config.mode === "time") parts.push(`${config.timeLimit}s`);
   else if (config.mode === "words") parts.push(`${config.wordCount}`);
+  else if (config.mode === "code") parts.push(config.codeLanguage);
+  else if (config.mode === "cli") parts.push(config.cliCategory);
 
   parts.push(config.language);
   if (config.punctuation) parts.push("punctuation");

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Text, useInput } from "ink";
 import type { GameConfig, GameMode, QuoteLength } from "../../engine/types.js";
-import { DEFAULT_CONFIG, TIME_LIMITS, WORD_COUNTS, QUOTE_LENGTHS } from "../../config/difficulty.js";
+import { DEFAULT_CONFIG, TIME_LIMITS, WORD_COUNTS, QUOTE_LENGTHS, CODE_LANGUAGES, CLI_CATEGORIES, SNIPPET_LENGTHS, COMMAND_LENGTHS } from "../../config/difficulty.js";
 import { listAvailableLanguages } from "../../constants/languages/index.js";
 import { FUNBOX_LIST } from "../../constants/funbox/index.js";
 import { useTerminalSize } from "../hooks/useTerminalSize.js";
@@ -9,7 +9,7 @@ import { useTheme } from "../hooks/useTheme.js";
 import { mapNavAction } from "../../input/navigationKeys.js";
 import { Logo } from "../components/Logo.js";
 
-const MODES: GameMode[] = ["time", "words", "quote", "zen", "custom"];
+const MODES: GameMode[] = ["time", "words", "quote", "code", "cli", "zen", "custom"];
 
 interface MenuScreenProps {
   onStart: (config: GameConfig) => void;
@@ -42,6 +42,18 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     return idx >= 0 ? idx : 2;
   });
   const [quoteLengthIdx, setQuoteLengthIdx] = useState(1);
+  const [codeLangIdx, setCodeLangIdx] = useState(() => {
+    const lang = initialConfig?.codeLanguage ?? "python";
+    const idx = CODE_LANGUAGES.indexOf(lang as typeof CODE_LANGUAGES[number]);
+    return idx >= 0 ? idx : 0;
+  });
+  const [snippetLengthIdx, setSnippetLengthIdx] = useState(1);
+  const [cliCategoryIdx, setCliCategoryIdx] = useState(() => {
+    const cat = initialConfig?.cliCategory ?? "general";
+    const idx = CLI_CATEGORIES.indexOf(cat as typeof CLI_CATEGORIES[number]);
+    return idx >= 0 ? idx : 0;
+  });
+  const [commandLengthIdx, setCommandLengthIdx] = useState(1);
   const [punctuation, setPunctuation] = useState(initialConfig?.punctuation ?? false);
   const [numbers, setNumbers] = useState(initialConfig?.numbers ?? false);
   const [languageIdx, setLanguageIdx] = useState(() => {
@@ -83,12 +95,22 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           setWordCountIdx((i) => Math.max(0, Math.min(WORD_COUNTS.length - 1, i + dir)));
         } else if (mode === "quote") {
           setQuoteLengthIdx((i) => Math.max(0, Math.min(QUOTE_LENGTHS.length - 1, i + dir)));
+        } else if (mode === "code") {
+          setCodeLangIdx((i) => (i + dir + CODE_LANGUAGES.length) % CODE_LANGUAGES.length);
+        } else if (mode === "cli") {
+          setCliCategoryIdx((i) => (i + dir + CLI_CATEGORIES.length) % CLI_CATEGORIES.length);
         }
       } else if (row === 3) {
-        if (dir === -1) {
-          setPunctuation((p) => !p);
+        if (mode === "code") {
+          setSnippetLengthIdx((i) => Math.max(0, Math.min(SNIPPET_LENGTHS.length - 1, i + dir)));
+        } else if (mode === "cli") {
+          setCommandLengthIdx((i) => Math.max(0, Math.min(COMMAND_LENGTHS.length - 1, i + dir)));
         } else {
-          setNumbers((n) => !n);
+          if (dir === -1) {
+            setPunctuation((p) => !p);
+          } else {
+            setNumbers((n) => !n);
+          }
         }
       } else if (row === 4) {
         setFunboxIdx((i) => (i + dir + FUNBOX_LIST.length) % FUNBOX_LIST.length);
@@ -105,17 +127,24 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         }
 
         const selectedFunbox = FUNBOX_LIST[funboxIdx]!;
+        const isCodeOrCli = mode === "code" || mode === "cli";
         const config: GameConfig = {
           ...DEFAULT_CONFIG,
           ...(initialConfig ?? {}),
           mode,
           timeLimit: TIME_LIMITS[timeLimitIdx]!,
           wordCount: WORD_COUNTS[wordCountIdx]!,
-          quoteLength: [QUOTE_LENGTHS[quoteLengthIdx]!.value as QuoteLength],
+          quoteLength: mode === "code"
+            ? [SNIPPET_LENGTHS[snippetLengthIdx]!.value as QuoteLength]
+            : mode === "cli"
+              ? [COMMAND_LENGTHS[commandLengthIdx]!.value as QuoteLength]
+              : [QUOTE_LENGTHS[quoteLengthIdx]!.value as QuoteLength],
           language: languages[languageIdx] ?? "english",
-          punctuation: selectedFunbox.disablesPunctuation ? false : punctuation,
-          numbers: selectedFunbox.disablesNumbers ? false : numbers,
+          punctuation: isCodeOrCli ? false : (selectedFunbox.disablesPunctuation ? false : punctuation),
+          numbers: isCodeOrCli ? false : (selectedFunbox.disablesNumbers ? false : numbers),
           funbox: [selectedFunbox.name],
+          codeLanguage: CODE_LANGUAGES[codeLangIdx]!,
+          cliCategory: CLI_CATEGORIES[cliCategoryIdx]!,
         };
         onStart(config);
         return;
@@ -187,6 +216,72 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         ))}
       </Box>
     );
+  } else if (mode === "code") {
+    subOptions = (
+      <Box flexDirection="column" alignItems="center" gap={0}>
+        <Box gap={2} justifyContent="center">
+          {CODE_LANGUAGES.map((lang, i) => (
+            <Text
+              key={`code-${i}`}
+              {...(row === 2 && i === codeLangIdx
+                ? { inverse: true }
+                : i === codeLangIdx
+                  ? { color: colors.main }
+                  : { color: colors.sub })}
+            >
+              {lang}
+            </Text>
+          ))}
+        </Box>
+        <Box gap={2} justifyContent="center">
+          {SNIPPET_LENGTHS.map((sl, i) => (
+            <Text
+              key={`slen-${i}`}
+              {...(row === 3 && i === snippetLengthIdx
+                ? { inverse: true }
+                : i === snippetLengthIdx
+                  ? { color: colors.main }
+                  : { color: colors.sub })}
+            >
+              {sl.label}
+            </Text>
+          ))}
+        </Box>
+      </Box>
+    );
+  } else if (mode === "cli") {
+    subOptions = (
+      <Box flexDirection="column" alignItems="center" gap={0}>
+        <Box gap={2} justifyContent="center">
+          {CLI_CATEGORIES.map((cat, i) => (
+            <Text
+              key={`cli-${i}`}
+              {...(row === 2 && i === cliCategoryIdx
+                ? { inverse: true }
+                : i === cliCategoryIdx
+                  ? { color: colors.main }
+                  : { color: colors.sub })}
+            >
+              {cat}
+            </Text>
+          ))}
+        </Box>
+        <Box gap={2} justifyContent="center">
+          {COMMAND_LENGTHS.map((cl, i) => (
+            <Text
+              key={`clen-${i}`}
+              {...(row === 3 && i === commandLengthIdx
+                ? { inverse: true }
+                : i === commandLengthIdx
+                  ? { color: colors.main }
+                  : { color: colors.sub })}
+            >
+              {cl.label}
+            </Text>
+          ))}
+        </Box>
+      </Box>
+    );
   } else if (mode === "zen") {
     subOptions = (
       <Box justifyContent="center">
@@ -254,23 +349,25 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         {/* Sub-options — row 2 */}
         {subOptions}
 
-        {/* Toggles: punctuation & numbers — row 3 */}
-        <Box gap={3} justifyContent="center">
-          <Text
-            {...(punctuation
-              ? (row === 3 ? { inverse: true } : { color: colors.main })
-              : (row === 3 ? { underline: true, color: colors.sub } : { color: colors.sub }))}
-          >
-            @ punctuation
-          </Text>
-          <Text
-            {...(numbers
-              ? (row === 3 ? { inverse: true } : { color: colors.main })
-              : (row === 3 ? { underline: true, color: colors.sub } : { color: colors.sub }))}
-          >
-            # numbers
-          </Text>
-        </Box>
+        {/* Toggles: punctuation & numbers — row 3 (hidden for code/cli) */}
+        {mode !== "code" && mode !== "cli" && (
+          <Box gap={3} justifyContent="center">
+            <Text
+              {...(punctuation
+                ? (row === 3 ? { inverse: true } : { color: colors.main })
+                : (row === 3 ? { underline: true, color: colors.sub } : { color: colors.sub }))}
+            >
+              @ punctuation
+            </Text>
+            <Text
+              {...(numbers
+                ? (row === 3 ? { inverse: true } : { color: colors.main })
+                : (row === 3 ? { underline: true, color: colors.sub } : { color: colors.sub }))}
+            >
+              # numbers
+            </Text>
+          </Box>
+        )}
 
         {/* Funbox selection — row 4 */}
         <Box gap={1} justifyContent="center">

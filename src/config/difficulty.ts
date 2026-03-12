@@ -77,11 +77,34 @@ export const DEFAULT_CONFIG: GameConfig = {
 
   // Custom text
   customText: null,
+
+  // Code snippets
+  codeLanguage: "python",
+
+  // CLI commands
+  cliCategory: "general",
 };
 
 export const TIME_LIMITS = [15, 30, 60, 120] as const;
 export const WORD_COUNTS = [10, 25, 50, 100, 200] as const;
 export const QUOTE_LENGTHS = [
+  { value: 0 as const, label: "short" },
+  { value: 1 as const, label: "medium" },
+  { value: 2 as const, label: "long" },
+  { value: 3 as const, label: "thicc" },
+];
+
+export const CODE_LANGUAGES = ["python", "javascript", "go", "rust"] as const;
+export const CLI_CATEGORIES = ["general", "git", "docker", "npm", "linux"] as const;
+
+export const SNIPPET_LENGTHS = [
+  { value: 0 as const, label: "short" },
+  { value: 1 as const, label: "medium" },
+  { value: 2 as const, label: "long" },
+  { value: 3 as const, label: "thicc" },
+];
+
+export const COMMAND_LENGTHS = [
   { value: 0 as const, label: "short" },
   { value: 1 as const, label: "medium" },
   { value: 2 as const, label: "long" },

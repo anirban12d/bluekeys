@@ -11,6 +11,8 @@ export function parseArgs(argv: string[]): GameConfig | null {
   let difficulty: Difficulty | null = null;
   let theme: string | null = null;
   let quoteLength: QuoteLength | null = null;
+  let codeLanguage: string | null = null;
+  let cliCategory: string | null = null;
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
@@ -21,6 +23,8 @@ export function parseArgs(argv: string[]): GameConfig | null {
         next === "time" ||
         next === "words" ||
         next === "quote" ||
+        next === "code" ||
+        next === "cli" ||
         next === "zen" ||
         next === "custom"
       ) {
@@ -60,6 +64,12 @@ export function parseArgs(argv: string[]): GameConfig | null {
         quoteLength = parsed as QuoteLength;
       }
       i++;
+    } else if (arg === "--code-language" && next) {
+      codeLanguage = next;
+      i++;
+    } else if (arg === "--cli-category" && next) {
+      cliCategory = next;
+      i++;
     }
   }
 
@@ -73,14 +83,18 @@ export function parseArgs(argv: string[]): GameConfig | null {
     numbers === null &&
     difficulty === null &&
     theme === null &&
-    quoteLength === null
+    quoteLength === null &&
+    codeLanguage === null &&
+    cliCategory === null
   ) {
     return null;
   }
 
   // Infer mode from flags
   if (mode === null) {
-    if (wordCount !== null) mode = "words";
+    if (codeLanguage !== null) mode = "code";
+    else if (cliCategory !== null) mode = "cli";
+    else if (wordCount !== null) mode = "words";
     else if (quoteLength !== null) mode = "quote";
     else mode = "time";
   }
@@ -96,5 +110,7 @@ export function parseArgs(argv: string[]): GameConfig | null {
     difficulty: difficulty ?? DEFAULT_CONFIG.difficulty,
     theme: theme ?? DEFAULT_CONFIG.theme,
     quoteLength: quoteLength !== null ? [quoteLength] : DEFAULT_CONFIG.quoteLength,
+    codeLanguage: codeLanguage ?? DEFAULT_CONFIG.codeLanguage,
+    cliCategory: cliCategory ?? DEFAULT_CONFIG.cliCategory,
   };
 }
