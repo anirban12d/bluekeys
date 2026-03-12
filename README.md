@@ -36,7 +36,7 @@ npm install -g bluekeys
 
 ```bash
 # Install a specific version
-curl -fsSL https://raw.githubusercontent.com/anirban12d/bluekeys/main/scripts/install.sh | sh -s v1.0.1
+curl -fsSL https://raw.githubusercontent.com/anirban12d/bluekeys/main/scripts/install.sh | sh -s v1.1.0
 ```
 
 Then simply run:
@@ -45,15 +45,30 @@ Then simply run:
 bluekeys
 ```
 
+### Upgrading
+
+```bash
+bluekeys upgrade                    # upgrade to latest version
+bluekeys upgrade v1.1.0             # install a specific version
+```
+
+Or re-run the install script:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/anirban12d/bluekeys/main/scripts/install.sh | sh
+```
+
 ### Quick start with flags
 
 ```bash
-bluekeys --mode time -t 60          # 60-second timed test
-bluekeys --mode words -w 100        # 100-word test
-bluekeys --mode quote               # quote mode
-bluekeys --theme dracula            # start with a specific theme
-bluekeys --language french           # test in French
-bluekeys --punctuation --numbers     # enable punctuation and numbers
+bluekeys --mode time -t 60                    # 60-second timed test
+bluekeys --mode words -w 100                  # 100-word test
+bluekeys --mode quote                         # quote mode
+bluekeys --mode code --code-language python   # type Python code snippets
+bluekeys --mode cli --cli-category git        # type git commands
+bluekeys --theme dracula                      # start with a specific theme
+bluekeys --language french                    # test in French
+bluekeys --punctuation --numbers              # enable punctuation and numbers
 ```
 
 ## Features
@@ -63,6 +78,8 @@ bluekeys --punctuation --numbers     # enable punctuation and numbers
 - **Time** — 15, 30, 60, or 120 second tests
 - **Words** — 10, 25, 50, 100, or 200 word tests
 - **Quote** — type real quotes (short, medium, long, thicc)
+- **Code** — type real code snippets (Python, JavaScript, Go, Rust)
+- **CLI** — type real terminal commands (general, git, docker, npm, linux)
 - **Zen** — free typing, no target text
 - **Custom** — paste your own text
 
@@ -120,10 +137,18 @@ Keybinding mode only affects navigation. It never interferes with your typing te
 Bluekeys stores its config at `~/.bluekeys/config.toml` (Windows: `%APPDATA%\.bluekeys\config.toml`). A fully commented config file is generated on first run.
 
 ```toml
-# mode: time | words | quote | zen | custom
+# mode: time | words | quote | code | cli | zen | custom
 mode = "time"
 timeLimit = 30
 language = "english"
+
+# Code snippets language (used when mode = "code")
+# Available: python, javascript, go, rust
+codeLanguage = "python"
+
+# CLI commands category (used when mode = "cli")
+# Available: general, git, docker, npm, linux
+cliCategory = "general"
 
 # keybindingMode: normal | vim | emacs
 keybindingMode = "vim"
@@ -143,21 +168,30 @@ All settings can also be changed from the in-app settings screen.
 
 ## CLI options
 
-| Flag               | Short | Description                                 |
-| ------------------ | ----- | ------------------------------------------- |
-| `--mode`           | `-m`  | Test mode (time, words, quote, zen, custom) |
-| `--time`           | `-t`  | Time limit in seconds                       |
-| `--words`          | `-w`  | Word count                                  |
-| `--language`       | `-l`  | Language                                    |
-| `--difficulty`     |       | normal, expert, master                      |
-| `--theme`          |       | Theme name                                  |
-| `--quote-length`   |       | 0-3 (short to thicc)                        |
-| `--punctuation`    |       | Enable punctuation                          |
-| `--no-punctuation` |       | Disable punctuation                         |
-| `--numbers`        |       | Enable numbers                              |
-| `--no-numbers`     |       | Disable numbers                             |
+| Flag               | Short | Description                                          |
+| ------------------ | ----- | ---------------------------------------------------- |
+| `--mode`           | `-m`  | Test mode (time, words, quote, code, cli, zen, custom) |
+| `--time`           | `-t`  | Time limit in seconds                                |
+| `--words`          | `-w`  | Word count                                           |
+| `--language`       | `-l`  | Language                                             |
+| `--difficulty`     |       | normal, expert, master                               |
+| `--theme`          |       | Theme name                                           |
+| `--quote-length`   |       | 0-3 (short to thicc)                                 |
+| `--code-language`  |       | Code language (python, javascript, go, rust)         |
+| `--cli-category`   |       | CLI category (general, git, docker, npm, linux)      |
+| `--punctuation`    |       | Enable punctuation                                   |
+| `--no-punctuation` |       | Disable punctuation                                  |
+| `--numbers`        |       | Enable numbers                                       |
+| `--no-numbers`     |       | Disable numbers                                      |
+| `--version`        | `-v`  | Show version                                         |
+| `--help`           | `-h`  | Show help                                            |
 
-Running `bluekeys` with no flags opens the interactive menu.
+| Command              | Description                           |
+| -------------------- | ------------------------------------- |
+| `bluekeys`           | Open interactive menu                 |
+| `bluekeys upgrade`   | Upgrade to latest version             |
+| `bluekeys version`   | Show version                          |
+| `bluekeys help`      | Show help                             |
 
 ## Building from source
 
