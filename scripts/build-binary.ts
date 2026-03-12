@@ -7,7 +7,7 @@ const target = process.argv[2]; // e.g. "bun-darwin-arm64"
 const result = await Bun.build({
   entrypoints: ["src/cli/index.tsx"],
   outdir: ".build",
-  target: (target ?? "bun") as import("bun").Target,
+  target: "bun",
   plugins: [
     {
       name: "stub-react-devtools",
