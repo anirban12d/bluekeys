@@ -1,0 +1,29 @@
+# Source
+src/
+
+# Tests
+tests/
+vitest.config.ts
+coverage/
+
+# Config
+tsconfig.json
+.claude/
+.gitignore
+.pnpm-store/
+
+# Docs (README and LICENSE are included by default)
+docs/
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Misc
+*.log
+npm-debug.log*
+*.tgz
