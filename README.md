@@ -101,6 +101,31 @@ Navigate menus and settings with the style you prefer:
 
 Keybinding mode only affects navigation. It never interferes with your typing test.
 
+### Learning mode
+
+A full touch-typing curriculum built right into the terminal:
+
+- **25 progressive lessons** across Beginner, Intermediate, and Advanced levels
+- **Keyboard visualization** with color-coded finger assignments — shows exactly which finger to use for each key
+- **Home row first** — start with J and F, build up row by row
+- **Three lesson types** — key drills, real-word practice, and mixed reviews
+- **Star ratings** — earn up to 3 stars per lesson based on accuracy (80% / 92% / 98%)
+- **Persistent progress** — pick up where you left off across sessions
+
+Access from the main menu via **learn**.
+
+### Error heatmap
+
+- **Per-test heatmap** on the results screen showing your most mistyped words with character-level error coloring
+- **Cross-session heatmap screen** with 5 tabs:
+  - **Overview** — total tests, words typed, errors, accuracy, avg/best WPM
+  - **Most missed words** — all-time error words ranked with bar charts
+  - **Character mistakes** — which character pairs you confuse most (e.g. h→e)
+  - **Accuracy trend** — sparkline showing improvement over time
+  - **Practice suggestions** — words to focus on based on your history
+
+Access from the main menu via **heatmap**.
+
 ### Detailed stats
 
 - WPM, raw WPM, accuracy, consistency
@@ -160,11 +185,12 @@ All settings can also be changed from the in-app settings screen.
 
 ### Data files
 
-| File             | Location       | Purpose             |
-| ---------------- | -------------- | ------------------- |
-| `config.toml`    | `~/.bluekeys/` | All settings        |
-| `pb.json`        | `~/.bluekeys/` | Personal bests      |
-| `results.ndjson` | `~/.bluekeys/` | Full result history |
+| File                  | Location       | Purpose                  |
+| --------------------- | -------------- | ------------------------ |
+| `config.toml`         | `~/.bluekeys/` | All settings             |
+| `pb.json`             | `~/.bluekeys/` | Personal bests           |
+| `results.ndjson`      | `~/.bluekeys/` | Full result history      |
+| `learn-progress.json` | `~/.bluekeys/` | Learning mode progress   |
 
 ## CLI options
 
