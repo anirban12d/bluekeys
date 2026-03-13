@@ -11,6 +11,9 @@ This document explains how the Bluekeys codebase is organized so that new contri
   - [Event Model](#event-model)
   - [Reducer Pattern](#reducer-pattern)
   - [Scoring](#scoring)
+  - [Error Analysis](#error-analysis)
+  - [History Analysis](#history-analysis)
+  - [Learning Mode](#learning-mode)
   - [Word Generation](#word-generation)
   - [Timer](#timer)
 - [UI Layer](#ui-layer)
@@ -36,12 +39,15 @@ Bluekeys follows a strict **engine/UI separation**:
 ┌──────────────────▼──────────────────────────┐
 │              App (Screen Router)             │
 │              src/app/App.tsx                 │
-└──┬──────────┬──────────┬───────────┬────────┘
-   │          │          │           │
- Menu      Game     GameOver    Settings
-Screen    Screen    Screen      Screen
-   │          │          │           │
-   └──────────┴──────────┴───────────┘
+└──┬────────┬────────┬─────────┬──────────────┘
+   │        │        │         │
+ Menu    Game    GameOver   Settings
+Screen  Screen   Screen     Screen
+   │        │        │         │
+   ├── Learn Menu Screen       │
+   ├── Lesson Screen           │
+   ├── Heatmap Screen          │
+   └────────┴────────┴─────────┘
                    │
          ┌─────────▼──────────┐
          │    React Hooks     │
@@ -70,9 +76,10 @@ The **engine** is pure TypeScript with zero UI dependencies. It can be tested in
 
 | Directory | Purpose |
 |---|---|
-| `src/engine/` | Pure game logic: state machine, scoring, word generation, timer, type definitions |
-| `src/ui/screens/` | Full-screen views: Menu, Game, GameOver, Settings, CustomText |
-| `src/ui/components/` | Reusable terminal UI components: WordStream, Cursor, LiveStats, Timer, ProgressBar, StatsPanel |
+| `src/engine/` | Pure game logic: state machine, scoring, word generation, timer, error analysis, history analysis, type definitions |
+| `src/learn/` | Learning mode: curriculum definitions, lesson generator, keyboard layout data, progress persistence |
+| `src/ui/screens/` | Full-screen views: Menu, Game, GameOver, Settings, CustomText, LearnMenu, Lesson, Heatmap |
+| `src/ui/components/` | Reusable terminal UI components: WordStream, Cursor, LiveStats, Timer, ProgressBar, StatsPanel, ErrorHeatmap, Keyboard |
 | `src/ui/hooks/` | React hooks bridging the engine to Ink: useGame, useKeyboard, useTimer, useTheme, useTerminalSize |
 | `src/state/` | Redux-like store (`store.ts`) and config/results persistence (`persistence.ts`) |
 | `src/config/` | Default configuration, theme definitions, difficulty settings |
@@ -94,7 +101,7 @@ All files in `src/engine/` are pure functions and types with no framework import
 
 Defined in `src/engine/types.ts`. The central `GameState` interface holds:
 
-- **`phase`** — current lifecycle stage: `menu`, `ready`, `active`, `finished`, `failed`, `settings`, `customText`
+- **`phase`** — current lifecycle stage: `menu`, `ready`, `active`, `finished`, `failed`, `settings`, `customText`. Additional app-level screens (`learn`, `lesson`, `heatmap`) are managed by the App router outside the engine phase.
 - **`config`** — the full `GameConfig` with mode, difficulty, display settings, theme, keybindings, funbox, etc.
 - **`words`** — the target word list and active word index
 - **`input`** — current typed input, history of completed words, missed word tracking
@@ -140,6 +147,33 @@ The reducer returns **commands** (side-effect intents like `START_TIMER`, `STOP_
 - **Character counts** — correct, incorrect, extra, missed, spaces
 - **Final result assembly** — builds the `FinalResult` object with all stats
 
+### Error Analysis
+
+`src/engine/errorAnalysis.ts` analyzes typing errors from completed tests:
+
+- **Per-word error detection** — identifies mistyped characters within each word
+- **Character-level diffing** — pinpoints exactly which characters were wrong
+
+### History Analysis
+
+`src/engine/historyAnalysis.ts` aggregates data across all saved results:
+
+- **Most missed words** — ranks words by error frequency across sessions
+- **Character confusion pairs** — identifies which characters are commonly swapped (e.g. `h→e`)
+- **Accuracy trend** — tracks accuracy over time
+- **Practice suggestions** — recommends words to focus on based on error history
+
+### Learning Mode
+
+The `src/learn/` directory contains the touch-typing curriculum system:
+
+| File | Purpose |
+|---|---|
+| `curriculum.ts` | 25 progressive lessons organized into Beginner, Intermediate, and Advanced levels |
+| `keyboard.ts` | Keyboard layout data with finger-to-key assignments |
+| `lessonGenerator.ts` | Generates drill text for each lesson (key drills, word practice, mixed reviews) |
+| `progress.ts` | Persists per-lesson star ratings and completion state to `~/.bluekeys/learn-progress.json` |
+
 ### Word Generation
 
 `src/engine/wordGenerator.ts` handles generating words for each mode:
@@ -173,6 +207,9 @@ Built with [Ink](https://github.com/vadimdemedes/ink), a React renderer for term
 | Game Over | `screens/GameOverScreen.tsx` | Results display with WPM, accuracy, character breakdown, per-second chart |
 | Settings | `screens/SettingsScreen.tsx` | Full configuration UI |
 | Custom Text | `screens/CustomTextScreen.tsx` | Text input for custom mode |
+| Learn Menu | `screens/LearnMenuScreen.tsx` | Learning mode curriculum browser with lesson selection and star ratings |
+| Lesson | `screens/LessonScreen.tsx` | Active lesson with keyboard visualization and typing drills |
+| Heatmap | `screens/HeatmapScreen.tsx` | Cross-session error analysis with overview, missed words, character mistakes, accuracy trend, and practice suggestions |
 
 Screen transitions are managed by `App.tsx` based on the current `GamePhase`.
 
@@ -186,6 +223,8 @@ Screen transitions are managed by `App.tsx` based on the current `GamePhase`.
 | `Timer` | Time remaining or elapsed |
 | `ProgressBar` | Visual progress indicator |
 | `StatsPanel` | Stats panel for the game over screen |
+| `ErrorHeatmap` | Per-test error heatmap showing mistyped words with character-level coloring |
+| `Keyboard` | Visual keyboard layout with color-coded finger assignments for learning mode |
 
 ### Hooks
 
@@ -223,6 +262,7 @@ During an active test, all printable character keys dispatch `INSERT_CHAR` event
 | `~/.bluekeys/config.toml` | TOML | User configuration (fully commented, generated on first run) |
 | `~/.bluekeys/pb.json` | JSON | Personal best records per mode/config combination |
 | `~/.bluekeys/results.ndjson` | NDJSON | Full result history (one JSON object per line) |
+| `~/.bluekeys/learn-progress.json` | JSON | Learning mode star ratings and lesson completion |
 
 On Windows, `~/.bluekeys/` is replaced with `%APPDATA%\.bluekeys\`.
 

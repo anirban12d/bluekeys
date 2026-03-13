@@ -152,6 +152,7 @@ src/
 │   ├── quotes/     # Quote collections (JSON) and loader
 │   └── funbox/     # Funbox mode definitions and transforms
 ├── engine/         # Pure game logic (no UI dependencies)
+├── learn/          # Learning mode: curriculum, lesson generator, keyboard data, progress
 ├── input/          # Key mapping and navigation keybindings
 ├── state/          # Redux-like store and persistence (config/results I/O)
 ├── ui/
