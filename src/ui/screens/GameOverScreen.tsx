@@ -4,9 +4,10 @@ import type { GameState, TypingSpeedUnit, TerminalTheme } from "../../engine/typ
 import { calculateFinalResult } from "../../engine/scoring.js";
 import { roundTo2 } from "../../utils/format.js";
 import { useTerminalSize } from "../hooks/useTerminalSize.js";
-import { checkAndUpdatePb } from "../../state/persistence.js";
+import { checkAndUpdatePb, appendResult } from "../../state/persistence.js";
 import { useTheme } from "../hooks/useTheme.js";
 import { mapNavAction } from "../../input/navigationKeys.js";
+import { ErrorHeatmap } from "../components/ErrorHeatmap.js";
 
 // ── Chart rendering ─────────────────────────────────────────────────
 
@@ -302,7 +303,9 @@ export const GameOverScreen: React.FC<GameOverScreenProps> = ({
       isPb: false,
       burstHistory: result.burstHistory ?? [],
     };
-    return checkAndUpdatePb(fullResult);
+    const isPbResult = checkAndUpdatePb(fullResult);
+    try { appendResult(fullResult); } catch { /* ignore save errors */ }
+    return isPbResult;
   }, [result, state]);
 
   const keybindingMode = state.config.keybindingMode;
@@ -412,6 +415,9 @@ export const GameOverScreen: React.FC<GameOverScreenProps> = ({
             />
           </Box>
         )}
+
+        {/* Error heatmap */}
+        <ErrorHeatmap state={state} width={contentWidth} colors={colors} />
 
         {/* Quote source */}
         {state.quoteInfo && (

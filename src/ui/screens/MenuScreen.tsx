@@ -14,6 +14,8 @@ const MODES: GameMode[] = ["time", "words", "quote", "code", "cli", "zen", "cust
 interface MenuScreenProps {
   onStart: (config: GameConfig) => void;
   onSettings?: () => void;
+  onHeatmap?: () => void;
+  onLearn?: () => void;
   onCustomText?: () => void;
   initialConfig?: GameConfig;
 }
@@ -21,6 +23,8 @@ interface MenuScreenProps {
 export const MenuScreen: React.FC<MenuScreenProps> = ({
   onStart,
   onSettings,
+  onHeatmap,
+  onLearn,
   onCustomText,
   initialConfig,
 }) => {
@@ -67,10 +71,10 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     return idx >= 0 ? idx : 0;
   });
 
-  // Row navigation: 0=start, 1=mode, 2=sub-options, 3=toggles, 4=funbox, 5=language, 6=settings
+  // Row navigation: 0=start, 1=mode, 2=sub-options, 3=toggles, 4=funbox, 5=language, 6=learn, 7=heatmap, 8=settings
   const [row, setRow] = useState(0);
 
-  const maxRow = onSettings ? 6 : 5;
+  const maxRow = 5 + (onLearn ? 1 : 0) + (onHeatmap ? 1 : 0) + (onSettings ? 1 : 0);
 
   const keybindingMode = initialConfig?.keybindingMode ?? "normal";
 
@@ -147,6 +151,20 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           cliCategory: CLI_CATEGORIES[cliCategoryIdx]!,
         };
         onStart(config);
+        return;
+      }
+
+      // Learn row: 6 (when present)
+      const learnRow = onLearn ? 6 : -1;
+      if (row === learnRow && onLearn) {
+        onLearn();
+        return;
+      }
+
+      // Heatmap row: after learn
+      const heatmapRow = onHeatmap ? 6 + (onLearn ? 1 : 0) : -1;
+      if (row === heatmapRow && onHeatmap) {
+        onHeatmap();
         return;
       }
 
@@ -398,7 +416,33 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           </Text>
         </Box>
 
-        {/* Settings button — row 6 (maxRow) */}
+        {/* Learn button — row 6 */}
+        {onLearn && (
+          <Box justifyContent="center">
+            <Text
+              {...(row === 6
+                ? { inverse: true }
+                : { color: colors.sub })}
+            >
+              learn
+            </Text>
+          </Box>
+        )}
+
+        {/* Heatmap button */}
+        {onHeatmap && (
+          <Box justifyContent="center">
+            <Text
+              {...(row === 6 + (onLearn ? 1 : 0)
+                ? { inverse: true }
+                : { color: colors.sub })}
+            >
+              heatmap
+            </Text>
+          </Box>
+        )}
+
+        {/* Settings button — last row (maxRow) */}
         {onSettings && (
           <Box justifyContent="center">
             <Text

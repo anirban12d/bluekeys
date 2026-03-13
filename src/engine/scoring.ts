@@ -205,6 +205,22 @@ export function calculateFinalResult(state: GameState): FinalResult {
   );
   const consistency = calculateConsistency(state.metrics.rawHistory);
 
+  // Compute character-level mistakes
+  const charMistakes: Record<string, number> = {};
+  const lastIdx = Math.min(state.words.activeWordIndex, state.input.history.length);
+  for (let i = 0; i < lastIdx; i++) {
+    const target = state.words.words[i];
+    const typed = state.input.history[i];
+    if (!target || typed === undefined) continue;
+    const minLen = Math.min(target.length, typed.length);
+    for (let c = 0; c < minLen; c++) {
+      if (typed[c] !== target[c]) {
+        const key = `${target[c]}>${typed[c]}`;
+        charMistakes[key] = (charMistakes[key] ?? 0) + 1;
+      }
+    }
+  }
+
   return {
     wpm,
     rawWpm: raw,
@@ -227,5 +243,7 @@ export function calculateFinalResult(state: GameState): FinalResult {
     quoteInfo: state.quoteInfo,
     timestamp: Date.now(),
     isPb: false, // Caller should compare against personal bests and set this
+    missedWords: { ...state.input.missedWords },
+    charMistakes: Object.keys(charMistakes).length > 0 ? charMistakes : undefined,
   };
 }

@@ -301,6 +301,8 @@ export interface FinalResult {
   quoteInfo: { source: string; id: number } | null;
   timestamp: number;
   isPb: boolean;
+  missedWords?: Record<string, number>;
+  charMistakes?: Record<string, number>; // "expected>typed" -> count
 }
 
 // ── Personal Best ────────────────────────────────────────────────────
