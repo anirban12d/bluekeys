@@ -1,5 +1,6 @@
 import { execSync } from "node:child_process";
 import { VERSION } from "./version.js";
+import { checkUpdateCommand } from "./updateCheck.js";
 
 export { VERSION };
 
@@ -10,6 +11,7 @@ Usage:
   bluekeys                        Launch interactive menu
   bluekeys [options]              Start a test directly
   bluekeys upgrade                Upgrade to the latest version
+  bluekeys check-update           Check if a new version is available
   bluekeys --version              Show version
   bluekeys --help                 Show this help
 
@@ -40,7 +42,7 @@ Examples:
  * Handle CLI commands that should run before the React app.
  * Returns true if the process should exit (command was handled).
  */
-export function handleCliCommands(argv: string[]): boolean {
+export async function handleCliCommands(argv: string[]): Promise<boolean> {
   const first = argv[0];
 
   if (first === "--version" || first === "-v" || first === "version") {
@@ -55,6 +57,11 @@ export function handleCliCommands(argv: string[]): boolean {
 
   if (first === "upgrade") {
     return runUpgrade(argv[1] ?? null);
+  }
+
+  if (first === "check-update") {
+    await checkUpdateCommand();
+    return true;
   }
 
   return false;
