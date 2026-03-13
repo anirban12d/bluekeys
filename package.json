@@ -1,6 +1,6 @@
 {
   "name": "bluekeys",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A feature-rich terminal typing test inspired by Monkeytype — with themes, vim/emacs keybindings, and detailed stats",
   "type": "module",
   "main": "dist/cli/index.js",
