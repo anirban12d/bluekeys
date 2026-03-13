@@ -17,6 +17,7 @@ interface LessonState {
   correct: number;
   incorrect: number;
   startTime: number | null;
+  charResults: boolean[]; // true = correct, false = incorrect, per typed char
 }
 
 function starStr(n: number): string {
@@ -65,6 +66,7 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({
     correct: 0,
     incorrect: 0,
     startTime: null,
+    charResults: [],
   });
 
   const [savedResult, setSavedResult] = useState<{
@@ -134,6 +136,7 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({
         correct: newCorrect,
         incorrect: newIncorrect,
         startTime,
+        charResults: [...prev.charResults, isCorrect],
       };
 
       // Check if lesson is complete
@@ -263,11 +266,13 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({
           <Text>
             {visibleText.split("").map((ch, i) => {
               const globalIdx = windowStart + i;
+              const display = ch === " " ? "\u00B7" : ch;
               if (globalIdx < state.cursor) {
-                // Already typed
+                // Already typed — color by correctness
+                const wasCorrect = state.charResults[globalIdx];
                 return (
-                  <Text key={i} color={colors.sub} dimColor>
-                    {ch === " " ? "\u00B7" : ch}
+                  <Text key={i} color={wasCorrect ? colors.text : colors.error} bold={!wasCorrect}>
+                    {display}
                   </Text>
                 );
               }
@@ -275,14 +280,14 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({
                 // Current character — cursor
                 return (
                   <Text key={i} inverse bold color={colors.main}>
-                    {ch === " " ? "\u00B7" : ch}
+                    {display}
                   </Text>
                 );
               }
               // Upcoming
               return (
-                <Text key={i} color={colors.text}>
-                  {ch === " " ? "\u00B7" : ch}
+                <Text key={i} color={colors.sub}>
+                  {display}
                 </Text>
               );
             })}
