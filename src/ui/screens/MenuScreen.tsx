@@ -71,10 +71,12 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     return idx >= 0 ? idx : 0;
   });
 
-  // Row navigation: 0=start, 1=mode, 2=sub-options, 3=toggles, 4=funbox, 5=language, 6=learn, 7=heatmap, 8=settings
+  // Row navigation: 0=start, 1=mode, 2=sub-options, 3=toggles, 4=funbox, 5=language, 6=learn/heatmap, 7=settings
   const [row, setRow] = useState(0);
+  const [learnHeatmapFocus, setLearnHeatmapFocus] = useState<"learn" | "heatmap">("learn");
 
-  const maxRow = 5 + (onLearn ? 1 : 0) + (onHeatmap ? 1 : 0) + (onSettings ? 1 : 0);
+  const hasLearnHeatmapRow = !!(onLearn || onHeatmap);
+  const maxRow = 5 + (hasLearnHeatmapRow ? 1 : 0) + (onSettings ? 1 : 0);
 
   const keybindingMode = initialConfig?.keybindingMode ?? "normal";
 
@@ -120,6 +122,8 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         setFunboxIdx((i) => (i + dir + FUNBOX_LIST.length) % FUNBOX_LIST.length);
       } else if (row === 5) {
         setLanguageIdx((i) => Math.max(0, Math.min(languages.length - 1, i + dir)));
+      } else if (hasLearnHeatmapRow && row === 6) {
+        setLearnHeatmapFocus((f) => f === "learn" ? "heatmap" : "learn");
       }
     }
 
@@ -154,17 +158,13 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         return;
       }
 
-      // Learn row: 6 (when present)
-      const learnRow = onLearn ? 6 : -1;
-      if (row === learnRow && onLearn) {
-        onLearn();
-        return;
-      }
-
-      // Heatmap row: after learn
-      const heatmapRow = onHeatmap ? 6 + (onLearn ? 1 : 0) : -1;
-      if (row === heatmapRow && onHeatmap) {
-        onHeatmap();
+      // Learn/Heatmap row (side by side on row 6)
+      if (hasLearnHeatmapRow && row === 6) {
+        if (learnHeatmapFocus === "learn" && onLearn) {
+          onLearn();
+        } else if (learnHeatmapFocus === "heatmap" && onHeatmap) {
+          onHeatmap();
+        }
         return;
       }
 
@@ -416,33 +416,31 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           </Text>
         </Box>
 
-        {/* Learn button — row 6 */}
-        {onLearn && (
-          <Box justifyContent="center">
-            <Text
-              {...(row === 6
-                ? { inverse: true }
-                : { color: colors.sub })}
-            >
-              learn
-            </Text>
+        {/* Learn & Heatmap — side by side on row 6 */}
+        {hasLearnHeatmapRow && (
+          <Box gap={3} justifyContent="center">
+            {onLearn && (
+              <Text
+                {...(row === 6 && learnHeatmapFocus === "learn"
+                  ? { inverse: true }
+                  : { color: colors.sub })}
+              >
+                learn
+              </Text>
+            )}
+            {onHeatmap && (
+              <Text
+                {...(row === 6 && learnHeatmapFocus === "heatmap"
+                  ? { inverse: true }
+                  : { color: colors.sub })}
+              >
+                heatmap
+              </Text>
+            )}
           </Box>
         )}
 
-        {/* Heatmap button */}
-        {onHeatmap && (
-          <Box justifyContent="center">
-            <Text
-              {...(row === 6 + (onLearn ? 1 : 0)
-                ? { inverse: true }
-                : { color: colors.sub })}
-            >
-              heatmap
-            </Text>
-          </Box>
-        )}
-
-        {/* Settings button — last row (maxRow) */}
+        {/* Settings — centered below */}
         {onSettings && (
           <Box justifyContent="center">
             <Text
