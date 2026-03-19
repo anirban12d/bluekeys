@@ -18,6 +18,12 @@ No browser. No distractions. Just you and your words per minute.
 
 ## Installation
 
+### Homebrew (macOS / Linux)
+
+```bash
+brew install anirban12d/tap/bluekeys
+```
+
 ### Quick install (macOS / Linux)
 
 ```bash
@@ -48,6 +54,7 @@ bluekeys
 ### Upgrading
 
 ```bash
+brew upgrade bluekeys               # if installed via Homebrew
 bluekeys upgrade                    # upgrade to latest version
 bluekeys upgrade v1.1.0             # install a specific version
 ```
@@ -56,6 +63,20 @@ Or re-run the install script:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/anirban12d/bluekeys/main/scripts/install.sh | sh
+```
+
+### Uninstalling
+
+```bash
+brew uninstall bluekeys             # if installed via Homebrew
+npm uninstall -g bluekeys           # if installed via npm
+sudo rm /usr/local/bin/bluekeys     # if installed via curl
+```
+
+To also remove your config and data:
+
+```bash
+rm -rf ~/.bluekeys
 ```
 
 ### Quick start with flags

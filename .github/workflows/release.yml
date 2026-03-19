@@ -78,3 +78,77 @@ jobs:
       - run: pnpm publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  update-homebrew:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: Compute SHA256 hashes
+        id: hashes
+        run: |
+          echo "darwin_arm64=$(sha256sum bluekeys-darwin-arm64.tar.gz | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          echo "darwin_x64=$(sha256sum bluekeys-darwin-x64.tar.gz | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          echo "linux_arm64=$(sha256sum bluekeys-linux-arm64.tar.gz | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          echo "linux_x64=$(sha256sum bluekeys-linux-x64.tar.gz | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Update Homebrew formula
+        uses: actions/checkout@v4
+        with:
+          repository: anirban12d/homebrew-bluekeys
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          path: homebrew-tap
+
+      - name: Write updated formula
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          VERSION="${VERSION#v}"
+          cat > homebrew-tap/Formula/bluekeys.rb << RUBY
+          class Bluekeys < Formula
+            desc "A feature-rich terminal typing test inspired by Monkeytype"
+            homepage "https://github.com/anirban12d/bluekeys"
+            version "${VERSION}"
+            license "GPL-3.0-or-later"
+
+            on_macos do
+              if Hardware::CPU.arm?
+                url "https://github.com/anirban12d/bluekeys/releases/download/v#{version}/bluekeys-darwin-arm64.tar.gz"
+                sha256 "${{ steps.hashes.outputs.darwin_arm64 }}"
+              else
+                url "https://github.com/anirban12d/bluekeys/releases/download/v#{version}/bluekeys-darwin-x64.tar.gz"
+                sha256 "${{ steps.hashes.outputs.darwin_x64 }}"
+              end
+            end
+
+            on_linux do
+              if Hardware::CPU.arm?
+                url "https://github.com/anirban12d/bluekeys/releases/download/v#{version}/bluekeys-linux-arm64.tar.gz"
+                sha256 "${{ steps.hashes.outputs.linux_arm64 }}"
+              else
+                url "https://github.com/anirban12d/bluekeys/releases/download/v#{version}/bluekeys-linux-x64.tar.gz"
+                sha256 "${{ steps.hashes.outputs.linux_x64 }}"
+              end
+            end
+
+            def install
+              bin.install "bluekeys"
+            end
+
+            test do
+              assert_match version.to_s, shell_output("#{bin}/bluekeys --version")
+            end
+          end
+          RUBY
+
+      - name: Commit and push
+        working-directory: homebrew-tap
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/bluekeys.rb
+          git commit -m "bluekeys ${GITHUB_REF_NAME}"
+          git push
