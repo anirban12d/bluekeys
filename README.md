@@ -21,7 +21,7 @@ No browser. No distractions. Just you and your words per minute.
 ### Homebrew (macOS / Linux)
 
 ```bash
-brew install anirban12d/tap/bluekeys
+brew install anirban12d/bluekeys/bluekeys
 ```
 
 ### Quick install (macOS / Linux)
